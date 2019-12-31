@@ -2,20 +2,28 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <limits>
+#include <algorithm>
 
 using namespace std;
 
-text_control::text_control(){}
+text_control::text_control(string file_name):fileName(file_name+".txt")
+{
 
-text_control::~text_control(){}
+}
+
+text_control::~text_control()
+{
+
+}
+
 
 int text_control::create_file(string file_name)
 {
     fstream file;
 
-    fileName=(file_name+".txt");
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
     file.open( cFileName, std::ios::out);
     if(file.good()==true)
@@ -24,26 +32,13 @@ int text_control::create_file(string file_name)
     }
 }
 
-int text_control::open_file(string file_name)
-{
-    fstream file;
 
-    fileName=(file_name+".txt");
-
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
-
-    file.open( cFileName, std::ios::in);
-    if(file.good()==true)
-    {
-        file.close();
-    }
-}
 
 int text_control::print()
 {
     std::fstream file;
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
 
     file.open( cFileName, std::ios::in | std::ios::out );
@@ -60,7 +55,7 @@ int text_control::load_all()
 {
     std::fstream file;
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
     file.open( cFileName, std::ios::in | std::ios::out );
 
@@ -86,53 +81,28 @@ int text_control::load_all()
 
 int text_control::load_line(int line_number)
 {
-
     std::fstream file;
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
-                //cFileName
     file.open( cFileName, std::ios::in | std::ios::out | std::ios::app);
-
-   if( file.good() == true )
+    file.seekg(std::ios::beg);
+    for(int i=0; i < line_number - 1; ++i)
     {
-        for( int x=0; x<line_number; x++ )
-        {
-            string line;
-
-
-            getline( file, line );
-
-            if( line == "\n" && x!=0 )
-            {
-                continue;
-            }
-
-            //file>>a>>b>>c>>d;
-
-            all_text=line;
-            file.ignore(0, '\n');
-            if(file.eof()==true)
-            {
-                return 0;
-            }
-        }
-        file.close();
+        file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
     }
+    file>>a;
 
+    std::replace(a.begin(), a.end(), '_', ' ');
 
-
-
-
-
-
+    file.close();
 }
 
 int text_control::save(string data)
 {
     std::fstream file;
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
                 //cFileName
     file.open( cFileName, std::ios::in | std::ios::out | std::ios::app);
@@ -143,11 +113,12 @@ int text_control::save(string data)
     }
 }
 
+
 int text_control::clear()
 {
     std::fstream file;
 
-    char *cFileName = &fileName[0];//konwersja na *char => funkcja open nie przyjmuje string
+    char *cFileName = &fileName[0];
 
                 //cFileName
     file.open( cFileName, std::ios::in | std::ios::out | std::ios::trunc);
@@ -155,12 +126,5 @@ int text_control::clear()
     {
         file.close();
     }
-}
-
-int text_control::convert(string var)
-{
-    stringstream change(var);
-    change>>a;
-    return a;
 }
 
